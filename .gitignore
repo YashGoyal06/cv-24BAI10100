@@ -1,0 +1,32 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Streamlit temporary files
+.streamlit/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+.idea/
+
+# Session telemetry outputs (keep folder, ignore exported sessions)
+data/sample_sessions/*.csv
+data/sample_sessions/*.json
+!data/sample_sessions/.gitkeep
+
+# Temporary media
+*.mp4
+*.avi
+*.mov
