@@ -1,0 +1,44 @@
+# How to Run ErgoVision
+**Student: Aditi Prakash**
+**Course: Computer Vision Project (VITyarthi)**
+
+---
+
+## 1. Single-Command Run (Interactive Visual Mode)
+
+To launch the live interactive webcam monitor with the real-time HUD display:
+
+```bash
+cd "/Users/yashgoyal/Documents/VITyarthi CV Project/Aditi_Project_ErgoVision"
+python3 main.py
+```
+
+### What You Will See:
+1. **Live Camera Feed**: Tracks your face in real-time.
+2. **Posture Badge**: Shows `GOOD` or `SLOUCHING (FORWARD TILT / HEAD TILTED)`.
+3. **Screen Proximity**: Shows `OPTIMAL`, `TOO CLOSE (<45 cm)`, or `TOO FAR (>85 cm)`.
+4. **Fatigue Monitor**: Tracks Eye Aspect Ratio (EAR) and rolling blinks per minute.
+5. **Controls**: Press **`q`** or **`ESC`** on the video window to stop. Detailed session statistics will be printed and exported to `data/sample_sessions/`.
+
+---
+
+## 2. Headless Terminal CLI Mode
+
+For automated or terminal evaluation:
+
+```bash
+# Run for 15 seconds in terminal:
+python3 main.py --cli --duration 15
+
+# Or run with test benchmark video:
+python3 main.py --cli --source data/sample_video.mp4 --duration 10
+```
+
+---
+
+## 3. Run Automated Unit Tests
+
+```bash
+python3 -m pytest tests/ -v
+```
+*(All tests verify geometry formulas, posture detection, and screen distance estimation).*
