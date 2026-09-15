@@ -1,0 +1,330 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{float}
+
+% Colors
+\definecolor{vitblue}{RGB}{14, 75, 155}
+\definecolor{darkslate}{RGB}{30, 41, 59}
+
+% Hyperlink configuration
+\hypersetup{
+    colorlinks=true,
+    linkcolor=vitblue,
+    filecolor=vitblue,      
+    urlcolor=vitblue,
+    pdftitle={VisionGuard Project Report},
+}
+
+% Section styling
+\titleformat{\section}{\Large\bfseries\color{vitblue}}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\large\bfseries\color{darkslate}}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{darkslate}}{\thesubsubsection}{0.5em}{}
+
+% Header and Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{gray}VisionGuard – AI Driver Drowsiness \& Distraction Detection}
+\fancyhead[R]{\small\color{gray}VITyarthi Capstone Report}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\begin{document}
+
+% =========================================================================
+% COVER PAGE
+% =========================================================================
+\begin{titlepage}
+    \centering
+    \vspace*{1.0cm}
+    
+    {\Huge \textbf{\color{vitblue}VisionGuard}}\\[0.3cm]
+    {\LARGE \textbf{AI-Based Driver Drowsiness and Distraction Detection System}}\\[0.8cm]
+    
+    {\large \textbf{Academic Capstone Project Report}}\\[0.2cm]
+    {\normalsize Submitted in partial fulfillment of the requirements for}\\[0.15cm]
+    {\normalsize \textbf{VITyarthi -- Build Your Own Project (Flipped Course Evaluation)}}\\[1.2cm]
+    
+    \begin{center}
+    \fbox{\parbox{0.88\textwidth}{
+        \centering
+        \vspace{0.3cm}
+        {\large \textbf{Candidate Details}}\\[0.4cm]
+        \begin{tabular}{p{0.32\textwidth} p{0.50\textwidth}}
+            \textbf{Student Name:} & Yash Goyal \\
+            \textbf{Registration Number:} & 24BAI10100 \\
+            \textbf{Degree Program:} & B.Tech (Computer Science \& Engg.) \\
+            \textbf{Course Domain:} & Computer Vision \& Pattern Recognition \\
+            \textbf{Academic Session:} & 2025 -- 2026 \\
+            \textbf{Institution:} & Vellore Institute of Technology (VIT) \\
+            \textbf{GitHub Repository:} & \texttt{YashGoyal06/cv-24BAI10100} \\
+        \end{tabular}
+        \vspace{0.3cm}
+    }}
+    \end{center}
+    
+    \vfill
+    {\normalsize \textbf{Date of Submission:} September 2026}\\[0.2cm]
+    {\small Vellore Institute of Technology, India}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+% =========================================================================
+% 1. COVER PAGE & PROJECT METADATA
+% =========================================================================
+\section{Project Metadata \& Classification}
+\begin{itemize}
+    \item \textbf{Project Title:} VisionGuard -- AI-Based Driver Drowsiness and Distraction Detection System
+    \item \textbf{Author:} Yash Goyal (Reg. No: 24BAI10100)
+    \item \textbf{Course \& Domain:} Computer Vision, Feature Extraction, 3D Pose Geometry, and Spatio-Temporal Motion Analysis
+    \item \textbf{Primary Keywords:} Facial Mesh, Eye Aspect Ratio (EAR), Mouth Aspect Ratio (MAR), Perspective-n-Point (SolvePnP), Driver Monitoring Systems (DMS), Temporal Hysteresis, Edge AI.
+\end{itemize}
+
+% =========================================================================
+% 2. INTRODUCTION
+% =========================================================================
+\section{Introduction}
+\subsection{Project Overview}
+Automotive safety research consistently demonstrates that human operator error remains the single largest contributor to vehicular accidents worldwide. According to the World Health Organization (WHO), over 1.35 million fatalities occur on global roads annually, with driver fatigue, sudden micro-sleep episodes, and cognitive distraction accounting for up to 30\% of highway collisions. Traditional vehicular telematics systems, such as Lane Departure Warning Systems (LDWS) or erratic steering torque sensors, operate reactively---alerting the driver only after the vehicle trajectory has already drifted into danger.
+
+\textbf{VisionGuard} is an intelligent, camera-based in-cabin Driver Monitoring System (DMS) that acts proactively. By analyzing ocular micro-movements, mouth geometry, and 3D head gaze orientation in real-time, the system detects cognitive lapses seconds prior to physical steering deviation.
+
+\subsection{Purpose \& Academic Motivation}
+Developed as part of the VITyarthi ``Build Your Own Project'' curriculum, VisionGuard bridges core Computer Vision mathematical foundations (Euclidean metric geometry, pinhole perspective models, 3D coordinate transformations) with high-performance real-time software engineering. It operates without wearable apparatus or specialized infrared depth cameras, running on consumer webcams at 30 FPS.
+
+\subsection{Scope}
+The scope of this project encompasses real-time video capture, dense 468-point 3D facial landmark regression, mathematical feature engineering (EAR, MAR, SolvePnP Euler angles), multi-cue risk synthesis with Exponential Moving Average (EMA) smoothing, visual HUD overlay generation, rate-limited auditory warnings, and exportable session telemetry (CSV and JSON).
+
+% =========================================================================
+% 3. PROBLEM STATEMENT
+% =========================================================================
+\section{Problem Statement}
+\subsection{Current Challenges}
+\begin{itemize}
+    \item \textbf{Wearable Inconvenience:} Wearable EEG headbands, smart rings, or pulse monitors are uncomfortable, require periodic recharging, and suffer from high driver abandonment rates.
+    \item \textbf{False Alarms during Natural Facial Motion:} Speech, yawning, laughter, and momentary saccadic eye blinks cause high false-positive rates in naive single-frame computer vision detectors.
+    \item \textbf{Hardware Constraints:} Complex deep-learning 3D convolutional neural networks require high-end discrete GPUs, making them impractical for standard vehicular edge microcontrollers.
+\end{itemize}
+
+\subsection{Proposed Solution}
+A lightweight, non-intrusive edge system operating on CPU architecture that couples 468-point facial landmark perception with mathematically explainable geometric metrics and temporal sliding-window verification.
+
+% =========================================================================
+% 4. FUNCTIONAL REQUIREMENTS
+% =========================================================================
+\section{Functional Requirements}
+\begin{itemize}
+    \item \textbf{FR-1 (Video Stream Acquisition):} The system shall capture video frames from a standard USB webcam or benchmark video file at $640 \times 480$ resolution at $\ge 25$ frames per second.
+    \item \textbf{FR-2 (Dense Facial Landmark Localization):} The system shall detect human faces and extract 468 3D geometric landmark coordinates in pixel coordinates $(x, y, z)$.
+    \item \textbf{FR-3 (Ocular Aperture \& Blink Frequency):} The system shall calculate the bilateral Eye Aspect Ratio (EAR) using Euclidean distance metrics and classify blinks versus sustained micro-sleeps ($\ge 15$ frames / 0.5s).
+    \item \textbf{FR-4 (Yawn Detection \& Speech Rejection):} The system shall compute the Mouth Aspect Ratio (MAR) and confirm involuntary yawning via a 15-frame temporal persistence buffer while rejecting transient speech syllables.
+    \item \textbf{FR-5 (3D Head Pose \& Distraction Estimation):} The system shall calculate 3D head orientation (Pitch, Yaw, Roll) using OpenCV's Perspective-n-Point (SolvePnP) algorithm with canonical 3D facial coordinates and trigger alerts when gaze diverges beyond $\pm 25^\circ$ for $> 0.67$ seconds.
+    \item \textbf{FR-6 (Composite Risk Assessment):} The system shall aggregate ocular, oral, and pose indicators into an instantaneous hazard score $\mathcal{H}_t \in [0, 100]$ and apply Exponential Moving Average (EMA) smoothing to classify the state into \texttt{SAFE}, \texttt{CAUTION}, \texttt{DROWSY}, \texttt{DISTRACTED}, or \texttt{HIGH RISK}.
+    \item \textbf{FR-7 (Real-Time Visual HUD \& Telemetry Export):} The system shall render a heads-up display overlay on live video frames and export per-second CSV telemetry and high-level JSON summaries upon termination.
+\end{itemize}
+
+% =========================================================================
+% 5. NON-FUNCTIONAL REQUIREMENTS
+% =========================================================================
+\section{Non-Functional Requirements}
+\begin{itemize}
+    \item \textbf{NFR-1 (Performance):} The end-to-end processing pipeline shall execute within $<40$ milliseconds per frame, sustaining 25--30 FPS on standard multi-core laptop CPUs.
+    \item \textbf{NFR-2 (Usability):} The system shall support single-command terminal execution (\texttt{python3 main.py}) with zero external configuration or complex GUI dependencies.
+    \item \textbf{NFR-3 (Reliability \& Graceful Fallback):} The system shall automatically fall back to bundled benchmark video files if webcam hardware is blocked by operating system security policies.
+    \item \textbf{NFR-4 (Resource Efficiency):} The application shall maintain CPU utilization below 20\% and RAM consumption below 350 MB.
+    \item \textbf{NFR-5 (Privacy by Design):} Video streams must remain entirely within volatile memory and must not be recorded or transmitted to third-party cloud servers.
+\end{itemize}
+
+% =========================================================================
+% 6. SYSTEM ARCHITECTURE
+% =========================================================================
+\section{System Architecture}
+VisionGuard is structured into five distinct, loosely coupled architectural tiers:
+\begin{enumerate}
+    \item \textbf{Video Acquisition Tier (\texttt{camera.py}):} Handles hardware initialization, multi-threaded frame acquisition, color-space normalization, and rolling FPS computation.
+    \item \textbf{Perception Tier (\texttt{face\_detector.py}):} Executes the MediaPipe FaceMesh model to extract 468 localized 3D vertices from raw BGR arrays.
+    \item \textbf{Feature Extraction Tier (\texttt{eye\_detector.py}, \texttt{yawn\_detector.py}, \texttt{head\_pose.py}):} Computes mathematically grounded scale-invariant geometric metrics: EAR, MAR, and SolvePnP 3D rotation angles.
+    \item \textbf{Assessment \& Alert Tier (\texttt{risk\_engine.py}, \texttt{alert\_manager.py}):} Computes weighted multi-cue hazard scores, applies temporal smoothing, updates state machines, and dispatches debounced audio cues.
+    \item \textbf{Presentation \& Export Tier (\texttt{utils.py}, \texttt{analytics.py}):} Renders the semi-transparent HUD overlay on video frames and serializes telemetry data to CSV and JSON formats.
+\end{enumerate}
+
+% =========================================================================
+% 7. DESIGN DIAGRAMS
+% =========================================================================
+\section{Design Diagrams}
+\subsection{System Architecture Diagram}
+The architecture isolates the frame ingestion, geometric feature extraction, and risk assessment into loosely coupled modules.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{diagrams/04-architecture-diagram.png}
+    \caption{VisionGuard -- High-Level System Architecture Diagram}
+\end{figure}
+
+\subsection{UML Use Case Diagram}
+The system models interactions between the Driver/Evaluator and core monitoring functions.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{diagrams/01-use-case-diagram.png}
+    \caption{VisionGuard -- UML Use Case Diagram}
+\end{figure}
+
+\subsection{Process Flow / Workflow Diagram}
+Illustrates the cyclical per-frame execution pipeline from capture to risk determination.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{diagrams/06-process-flow-diagram.png}
+    \caption{VisionGuard -- Process Flow and Decision Diagram}
+\end{figure}
+
+\subsection{UML Sequence Diagram}
+Depicts the chronological invocation order across classes during a single frame evaluation cycle.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{diagrams/03-sequence-diagram.png}
+    \caption{VisionGuard -- UML Sequence Diagram}
+\end{figure}
+
+\subsection{UML Class Diagram}
+Details object-oriented class structure, attributes, methods, and relationships.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{diagrams/02-class-diagram.png}
+    \caption{VisionGuard -- UML Class Diagram}
+\end{figure}
+
+\subsection{Storage \& Telemetry ER Diagram}
+Details the $1:N$ relationship between session metadata and per-second continuous telemetry logs.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{diagrams/05-er-diagram.png}
+    \caption{VisionGuard -- Entity-Relationship (ER) Diagram}
+\end{figure}
+
+% =========================================================================
+% 8. COMPUTER VISION METHODOLOGY
+% =========================================================================
+\section{Computer Vision Methodology \& Mathematical Foundations}
+
+\subsection{Eye Aspect Ratio (EAR) Formulation}
+Based on Soukupov\'{a} and \v{C}ech (2016), the Eye Aspect Ratio represents the ratio of vertical eyelid aperture to horizontal eye length:
+\begin{equation}
+\text{EAR} = \frac{\|p_2 - p_6\|_2 + \|p_3 - p_5\|_2}{2 \cdot \|p_1 - p_4\|_2}
+\end{equation}
+where $p_1, p_4$ are lateral eye corners, and $(p_2, p_6), (p_3, p_5)$ are vertical eyelid landmark pairs. Under nominal open-eye conditions, $\text{EAR} \in [0.28, 0.38]$. When closed, $\text{EAR} < 0.22$.
+
+\subsection{Mouth Aspect Ratio (MAR) Formulation}
+Oral aperture is quantified to capture yawning while remaining scale-invariant:
+\begin{equation}
+\text{MAR} = \frac{\|p_{13} - p_{14}\|_2 + \|p_{17} - p_{0}\|_2}{2 \cdot \|p_{61} - p_{291}\|_2}
+\end{equation}
+A calibrated threshold of $\text{MAR} > 0.65$ sustained over 15 consecutive frames reliably isolates yawning episodes from natural conversation.
+
+\subsection{3D Head Pose via Perspective-n-Point (SolvePnP)}
+Head orientation is solved by establishing correspondences between six 3D canonical anthropometric points $\mathbf{P}_w$ and their 2D pixel coordinates $\mathbf{p}$:
+\begin{equation}
+s \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \mathbf{K} \begin{bmatrix} \mathbf{R} & \mathbf{t} \end{bmatrix} \begin{bmatrix} X_w \\ Y_w \\ Z_w \\ 1 \end{bmatrix}
+\end{equation}
+The rotation matrix $\mathbf{R}$ is decomposed via projection matrix decomposition into Pitch ($\theta_x$), Yaw ($\theta_y$), and Roll ($\theta_z$).
+
+\subsection{Multi-Cue Risk Synthesis}
+Instantaneous hazard $\mathcal{H}_t$ is computed via weighted linear summation:
+\begin{equation}
+\mathcal{H}_t = \left( 0.40 \cdot f_{\text{eye}} + 0.25 \cdot f_{\text{yawn}} + 0.25 \cdot f_{\text{dist}} + 0.10 \cdot f_{\text{blink}} \right) \times 100
+\end{equation}
+Smoothed risk $\mathcal{R}_t$ is computed using Exponential Moving Average:
+\begin{equation}
+\mathcal{R}_t = \alpha \cdot \mathcal{H}_t + (1 - \alpha) \cdot \mathcal{R}_{t-1}, \quad \text{with } \alpha = 0.25
+\end{equation}
+
+% =========================================================================
+% 9. SCREENSHOTS \& OPERATIONAL RESULTS
+% =========================================================================
+\section{Screenshots \& Operational Results}
+The live OpenCV HUD displays high-contrast status badges, risk gauges, and real-time biometric telemetry:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{screenshots/01_live_monitoring_safe.png}
+    \caption{Operational State 1: Nominal Attentive Driving (\texttt{SAFE} State)}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{screenshots/02_drowsiness_detected.png}
+    \caption{Operational State 2: Prolonged Eye Closure Alert (\texttt{DROWSY} State)}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{screenshots/03_distraction_detected.png}
+    \caption{Operational State 3: Head Gaze Turned Away (\texttt{DISTRACTED} State)}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{screenshots/05_compound_high_risk.png}
+    \caption{Operational State 4: Severe Compound Hazard (\texttt{HIGH RISK} State)}
+\end{figure}
+
+% =========================================================================
+% 10. TESTING APPROACH & VALIDATION
+% =========================================================================
+\section{Testing Approach \& Validation Results}
+VisionGuard incorporates an automated test suite executed via Pytest with 17 unit tests achieving 100\% pass rate:
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Test Module} & \textbf{Functions Tested} & \textbf{Criteria} & \textbf{Result} \\
+\midrule
+\texttt{test\_eye\_detector.py} & EAR Calculation, Blink Count, Prolonged Closure & Distance Invariance, EAR $<0.22$ & \textbf{PASS} \\
+\texttt{test\_yawn\_detector.py} & MAR Calculation, Speech Suppression & MAR $>0.65$, 15-frame window & \textbf{PASS} \\
+\texttt{test\_head\_pose.py} & SolvePnP Projection, Euler Decomposition & Angle Limits, None Handling & \textbf{PASS} \\
+\texttt{test\_risk\_engine.py} & Multi-cue Fusion, State Escalation, EMA & State Machine Transitions & \textbf{PASS} \\
+\texttt{test\_analytics.py} & Metrics Accumulation, CSV/JSON Serialization & File Integrity \& Schema & \textbf{PASS} \\
+\bottomrule
+\end{tabular}
+\caption{VisionGuard Automated Test Suite Results (17/17 Passed)}
+\end{table}
+
+% =========================================================================
+% 11. CHALLENGES & SOLUTIONS
+% =========================================================================
+\section{Challenges Faced \& Technical Solutions}
+\begin{enumerate}
+    \item \textbf{MediaPipe 1.x Tasks Metal Delegate Conflict on Apple Silicon:} Upgraded MediaPipe 1.0.1 caused \texttt{DrishtiMetalHelper} initialization failures on macOS arm64.
+    \textit{Solution:} Pinned the stable native \texttt{mediapipe==0.10.14} release with compatible \texttt{protobuf<4.26,>=3.20.2}, ensuring reliable 468-point FaceMesh extraction.
+    \item \textbf{Euler Angle Discontinuities in SolvePnP:} Direct rotation matrix trigonometric inversions exhibited gimbal lock at extreme orientations.
+    \textit{Solution:} Utilized OpenCV's \texttt{decomposeProjectionMatrix} to extract intuitive camera-calibrated Euler angles.
+    \item \textbf{Yawn False Positives during Speech:} Pronouncing rounded vowels momentarily elevates MAR.
+    \textit{Solution:} Enforced a 15-frame continuous persistence window and a 60-frame refractory cooldown period.
+\end{enumerate}
+
+% =========================================================================
+% 12. LEARNINGS & CONCLUSION
+% =========================================================================
+\section{Learnings, Conclusion \& References}
+\subsection{Key Takeaways}
+Developing VisionGuard demonstrated that mathematically grounded geometric features (EAR, MAR, SolvePnP) deliver transparent, explainable, and resource-efficient performance superior to opaque deep neural networks for real-time edge computer vision applications.
+
+\subsection{References}
+\begin{enumerate}
+    \item Soukupov\'{a}, T., \& \v{C}ech, J. (2016). Real-Time Eye Blink Detection using Facial Landmarks. \textit{21st Computer Vision Winter Workshop (CVWW)}.
+    \item Lugaresi, C., et al. (2019). MediaPipe: A Framework for Building Perception Pipelines. \textit{arXiv preprint arXiv:1906.08172}.
+    \item Bradski, G. (2000). The OpenCV Library. \textit{Dr. Dobb's Journal of Software Tools}.
+    \item Hartley, R., \& Zisserman, A. (2003). \textit{Multiple View Geometry in Computer Vision}. Cambridge University Press.
+\end{enumerate}
+
+\end{document}
