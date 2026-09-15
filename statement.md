@@ -1,45 +1,67 @@
-# VisionGuard – AI-Based Driver Drowsiness and Distraction Detection System
+# Project Statement
 
-## 1. Problem Statement
-Driver fatigue, drowsiness, and inattention represent leading contributors to global vehicular collisions and highway fatalities. Conventional vehicle telemetry (such as steering jerk or lane departure) often detects fatigue only after unsafe vehicle trajectories have occurred. Real-time visual monitoring of driver facial biometrics provides an early, non-invasive indicator of cognitive degradation and gaze diversion. This project builds a real-time, explainable Computer Vision pipeline that monitors facial geometry to proactively detect drowsiness, prolonged eye closures, yawning, and head rotation away from the road.
+## Problem Statement
+Automotive transport constitutes the backbone of modern logistics and mobility, yet driver fatigue, micro-sleep episodes, and visual distractions remain primary catalysts in vehicular collisions globally. According to the World Health Organization (WHO), over 1.35 million traffic fatalities occur annually, with driver impairment contributing to more than 20% of severe highway crashes. Traditional vehicular warning systems—such as lane departure warning systems (LDWS) or steering jerk sensors—are fundamentally reactive: they detect an anomaly only after the vehicle trajectory has already begun to deviate dangerously into oncoming traffic.
 
-## 2. Scope of the Project
-- **In Scope:**
-  - Real-time video frame acquisition from standard consumer webcams (30 FPS, 640×480).
-  - Dense facial landmark tracking using lightweight mesh models (MediaPipe 468 landmarks).
-  - Mathematical computation of Eye Aspect Ratio (EAR) for blink and micro-sleep identification.
-  - Mouth Aspect Ratio (MAR) formulation for involuntary yawn detection.
-  - Perspective-n-Point (SolvePnP) rigid 3D pose estimation for yaw/pitch distraction tracking.
-  - Multi-cue temporal risk engine synthesizing biometrics into actionable safety states (`SAFE`, `CAUTION`, `DROWSY`, `DISTRACTED`, `HIGH RISK`).
-  - Interactive Streamlit dashboard with heads-up display (HUD), audible alarms, and post-session telemetry export (CSV/JSON).
-  - Validation protocol across controlled real-world driving simulation scenarios.
+There is a critical requirement for a non-intrusive, proactive Driver Monitoring System (DMS) that continuously observes human facial biometrics, identifies cognitive and physical drowsiness early, detects diverted gaze in real time, and issues immediate graded alerts before hazardous control loss occurs.
 
-- **Out of Scope:**
-  - Medical diagnosis of clinical sleep disorders (narcolepsy, sleep apnea).
-  - Certified automotive ASIL-D embedded controller deployment.
-  - Autonomous vehicle steering actuation or braking intervention.
+## Scope of the Project
+VisionGuard provides an end-to-end, edge-computing Computer Vision pipeline capable of ingesting live video streams, localizing dense 3D facial landmarks, evaluating scale-invariant ocular and oral geometry, estimating 3D head orientation via Perspective-n-Point (SolvePnP), and synthesizing multi-cue risk assessments.
 
-## 3. Target Users
-1. **Commercial Fleet Operators:** Logistics managers seeking driver shift safety metrics and fatigue event tracking.
-2. **Commuters & Long-Distance Drivers:** Everyday drivers seeking non-intrusive alertness monitoring during night highway travel.
-3. **Automotive Telematics Developers:** Engineers prototyping intelligent Driver Monitoring Systems (DMS) for next-generation vehicle dashboards.
-4. **Academic Researchers & Students:** University researchers studying real-time feature extraction, geometric Computer Vision, and human-computer safety interfaces.
+**In Scope:**
+* Real-time video frame acquisition from consumer webcams and pre-recorded driving video files ($640 \times 480$, 30 FPS)
+* MediaPipe FaceMesh perception extracting 468 dense 3D facial vertices
+* Mathematical formulation of Eye Aspect Ratio (EAR) for blink counting and prolonged eye-closure detection
+* Mouth Aspect Ratio (MAR) computation with temporal persistence to distinguish involuntary yawning from natural speech
+* Classical 3D Perspective-n-Point (SolvePnP) rigid head pose estimation calculating Euler angles (Pitch, Yaw, Roll)
+* Multi-factor linear hazard scoring with Exponential Moving Average (EMA) temporal smoothing
+* Tiered safety state escalation (`SAFE`, `CAUTION`, `DROWSY`, `DISTRACTED`, `HIGH RISK`)
+* Interactive web-based dashboard (Streamlit) and headless command-line interface (CLI)
+* Rate-limited, non-blocking auditory alert cues with anti-spam cooldown timers
+* Real-time telemetry logging and export to CSV and JSON formats
 
-## 4. High-Level Features
-- **High-Precision Facial Landmark Localization:** 468-point 3D landmark mesh mapped to pixel space in real time.
-- **Explainable Biometric Thresholding:** Fully transparent mathematical formulation of EAR and MAR without black-box unexplainable scores.
-- **Temporal False-Positive Suppression:** Multi-frame persistence buffers that distinguish normal speech from yawning and quick blinks from prolonged micro-sleep.
-- **Head Orientation Vector Projection:** 3D gaze ray projection visualizing driver focal attention direction.
-- **Debounced Auditory Cues:** Threaded non-blocking acoustic warnings with cooldown protection to eliminate driver annoyance.
-- **Session Telemetry & Analytics:** Granular timeseries export of EAR, MAR, and safety states for retrospective fleet safety auditing.
+**Out of Scope:**
+* Medical diagnosis of clinical sleep disorders (such as narcolepsy or sleep apnea)
+* Certified automotive ASIL-D embedded controller integration (ISO 26262)
+* Autonomous vehicle steering actuation or electro-mechanical braking intervention
+* Full functionality in total darkness without an active Near-Infrared (NIR) camera
 
-## 5. Expected Outcomes
-- Sub-50ms per-frame end-to-end processing latency on standard consumer laptops.
-- Over 90% detection accuracy on controlled prolonged eye closure and distraction test scenarios.
-- Zero frame crashes during temporary facial occlusions or variable ambient lighting.
-- A fully reproducible, submission-ready project demonstrating core Computer Vision methodologies.
+## Target Users
+* **Commercial Fleet Operators & Logistics Managers**: Fleet tracking of driver fatigue trends, shift safety auditing, and route risk profiling
+* **Everyday Drivers & Long-Distance Commuters**: Real-time cabin companion providing non-intrusive alertness reminders during night driving
+* **Automotive Telematics & DMS Engineers**: Prototyping computer vision algorithms for next-generation in-cabin safety systems
+* **Academic Evaluators & Researchers**: Demonstrating rigorous applications of geometric Computer Vision, landmark regression, and temporal modeling
 
-## 6. Project Boundaries & Operational Constraints
-- Operates under adequate ambient illumination (or near-infrared camera sources for night operation).
-- Designed for single-driver frontal view within ±45° camera orientation angle.
-- Compliant with ethical privacy guidelines: all image processing occurs locally in volatile memory; raw video is never transmitted to external cloud servers.
+## High-Level Features
+
+### 1. Face & Facial Landmark Perception Module
+* High-frequency 468-point 3D landmark mesh extraction using MediaPipe FaceMesh
+* Fast conversion of normalized coordinates into image pixel space
+* Graceful degradation: handles temporary facial occlusions, head turns, or camera dropouts without crashing (`NO FACE` state)
+
+### 2. Ocular & Drowsiness Tracking Module
+* Real-time 6-point Eye Aspect Ratio (EAR) calculation per eye
+* Intentional blink tracking ($1 - 4$ frames) and blink rate (blinks/minute) monitoring
+* Sustained eye closure detection ($\ge 15$ frames / $\approx 0.5$s) indicating micro-sleep
+
+### 3. Yawn & Fatigue Detection Module
+* Mouth Aspect Ratio (MAR) measuring oral aperture relative to horizontal mouth width
+* Multi-frame persistence buffer ($\ge 15$ continuous frames) to eliminate false alarms from speech or laughter
+* Refractory cooldown timer preventing duplicate yawn event counts
+
+### 4. 3D Head Pose & Distraction Module
+* SolvePnP using 6 canonical anthropometric 3D facial coordinates
+* Decomposition of rotation vectors into Tait-Bryan Euler angles (Pitch, Yaw, Roll)
+* 3D gaze ray projection visualizing driver focal attention direction
+* Sustained gaze diversion warning ($|\theta_{\text{yaw}}| > 25^\circ$ for $>20$ frames)
+
+### 5. Multi-Cue Risk Engine
+* Linear hazard scoring combining eye closure, yawning, distraction, and blink irregularity into a $[0, 100]$ score
+* Exponential Moving Average (EMA) temporal filter smoothing sensor noise
+* Deterministic hierarchical safety state classifier
+
+### 6. Dual Presentation & Alert System
+* Modern Streamlit web dashboard with heads-up display (HUD) overlay and parameter calibration sliders
+* Standalone terminal CLI script (`cli.py`) for automated, non-GUI execution
+* Debounced non-blocking auditory bell alarms with 2.0-second cooldown protection
+* Full session telemetry logging with one-click export to CSV and JSON formats

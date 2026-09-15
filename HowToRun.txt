@@ -1,0 +1,85 @@
+# How to Run VisionGuard
+
+VisionGuard provides two execution modes:
+1. **Interactive Web Dashboard (Streamlit)** — Full GUI with video stream, heads-up display (HUD), live biometrics, and parameter sliders.
+2. **Command-Line Interface (CLI)** — Terminal-only execution without any GUI dependency, suitable for headless servers, scripts, and evaluation pipelines.
+
+---
+
+## Prerequisites
+- Python 3.9, 3.10, or 3.11 installed
+- USB Webcam or built-in laptop camera (or a test video file)
+- macOS, Linux, or Windows
+
+---
+
+## 1. Environment Setup & Dependency Installation
+
+```bash
+# Navigate to the project directory
+cd "/Users/yashgoyal/Documents/VITyarthi CV Project"
+
+# Optional: Create a virtual environment
+python3 -m venv venv
+source venv/bin/activate       # On Windows: venv\Scripts\activate
+
+# Install required dependencies
+pip3 install -r requirements.txt
+```
+
+---
+
+## 2. Option A: Run via Command Line Interface (CLI)
+*Recommended for automated testing or headless terminal environments.*
+
+```bash
+# Run with default webcam (source 0) for 15 seconds
+python3 cli.py
+
+# Run for a custom duration (e.g. 30 seconds)
+python3 cli.py --duration 30
+
+# Run with a video file instead of a live webcam
+python3 cli.py --source data/test_video.mp4 --duration 20
+
+# Run without audio beeps
+python3 cli.py --no-audio
+```
+
+During CLI execution, real-time telemetry (time, FPS, State, Risk %, EAR, Head Pose, Blinks) streams directly to the terminal stdout. Upon completion, telemetry CSV and summary JSON files are automatically exported to `data/sample_sessions/`.
+
+---
+
+## 3. Option B: Run via Streamlit Web Dashboard
+
+```bash
+streamlit run app.py
+```
+
+The application will launch in your default web browser at `http://localhost:8501`.
+
+### Dashboard Controls:
+1. **Select Stream Source**: Choose either "Hardware Webcam (Default Index 0)" or upload a recorded video clip (.mp4 / .avi).
+2. **Adjust Detection Thresholds**: Use the sidebar sliders to customize EAR threshold, prolonged closure frames, MAR threshold, and yaw angles.
+3. **Start Monitoring**: Click **▶ Start Monitoring** to begin real-time analysis.
+4. **Stop & Export**: Click **⏹ Stop Monitoring** to display summary KPI cards and download CSV/JSON session datasets.
+
+---
+
+## 4. Run Automated Unit Tests
+
+```bash
+python3 -m pytest tests/ -v
+```
+
+All 17 automated tests verify mathematical formulations (Euclidean distance, EAR, MAR), 3D SolvePnP pose estimation, Risk Engine state transitions, and file persistence.
+
+---
+
+## 5. Recompile Project Report PDF
+
+```bash
+python3 generate_report_pdf.py
+```
+
+Compiles `VisionGuard_Project_Report.pdf` matching the official 14-section university format.
