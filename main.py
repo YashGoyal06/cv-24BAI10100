@@ -17,8 +17,14 @@ import argparse
 import os
 import sys
 import time
+import warnings
 import cv2
 import numpy as np
+
+# Suppress framework deprecation notices for a clean terminal experience
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["GLOG_minloglevel"] = "3"
+warnings.filterwarnings("ignore", category=UserWarning, module="google.protobuf")
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 if CURRENT_DIR not in sys.path:
