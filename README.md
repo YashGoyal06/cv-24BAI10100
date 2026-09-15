@@ -55,7 +55,7 @@ The project is structured specifically for the **VITyarthi "Build Your Own Proje
 ## Features
 
 **Face & Landmark Localization**  
-Tracks 468 dense 3D facial landmarks in real time using MediaPipe FaceMesh, normalizing normalized coordinates to image pixel space with robust handling of temporary facial loss.
+Tracks 468 dense 3D facial landmarks in real time using MediaPipe FaceMesh, mapping normalized coordinates to image pixel space with robust handling of temporary facial loss.
 
 **Eye Aspect Ratio (EAR) & Blink Tracking**  
 Implements the 6-point EAR formula (Soukupová & Čech, 2016) to calculate eyelid aperture, record intentional blinks ($1-4$ frames), compute blink rates, and detect micro-sleep episodes ($\ge 15$ frames).
@@ -86,8 +86,6 @@ Logs granular frame-level telemetry and generates one-click exports to structure
 VisionGuard/
 │
 ├── src/
-│   ├── models/
-│   ├── services/
 │   ├── config.py                 # Centralized thresholds & configuration dataclasses
 │   ├── camera.py                 # OpenCV VideoStream frame acquisition & FPS tracker
 │   ├── face_detector.py          # MediaPipe FaceMesh 468 3D landmark extractor
@@ -107,26 +105,14 @@ VisionGuard/
 │   └── test_analytics.py         # Unit tests for session telemetry & file export
 │
 ├── data/
-│   ├── README.md                 # Dataset guide (NTHU-DDD, YawDD, Biwi) & test protocol
-│   └── sample_sessions/          # Directory for exported session logs
+│   └── sample_sessions/          # Directory for exported session logs (.csv, .json)
 │
 ├── docs/
-│   ├── diagrams/                 # Rendered PNG system diagrams (01-06)
-│   ├── screenshots/              # Rendered PNG operational UI states (01-05)
-│   ├── PROJECT_REPORT.md         # 14-section formal university project report
-│   ├── ARCHITECTURE.md           # Layered architecture specifications
-│   ├── ALGORITHMS.md             # Mathematical formulations (EAR, MAR, PnP, EMA)
-│   ├── DIAGRAMS.md               # Mermaid system diagrams & walkthroughs
-│   ├── TESTING.md                # Test ID matrix & manual validation protocol
-│   └── FUTURE_ENHANCEMENTS.md    # Edge deployment, NIR cameras, rPPG heart rate
-│
-├── models/
-│   └── README.md                 # Landmark topology & 3D canonical coordinates
+│   ├── diagrams/                 # High-resolution PNG system diagrams (01-06)
+│   └── screenshots/              # Rendered PNG operational UI states (01-05)
 │
 ├── app.py                        # Streamlit web dashboard application
 ├── cli.py                        # Standalone terminal command-line interface
-├── generate_report_pdf.py        # PDF report compiler using ReportLab
-├── VisionGuard_Project_Report.pdf# 14-section submission-ready PDF report
 ├── requirements.txt              # Pinned Python package dependencies
 ├── statement.md                  # University project statement & scope
 ├── HowToRun.txt                  # Platform execution notes
@@ -147,7 +133,6 @@ VisionGuard/
 | Web Dashboard | Streamlit 1.63.0 (Dark Glassmorphic UI) |
 | CLI Interface | Standard Library (`argparse`, `sys`, `time`) |
 | Testing Framework | Pytest 9.1.1 |
-| Document Generation | ReportLab 5.0.0 |
 | Version Control | Git & GitHub |
 
 ---
@@ -163,8 +148,8 @@ VisionGuard/
 
 ```bash
 # Clone the repository
-git clone https://github.com/YashGoyal06/VisionGuard.git
-cd VisionGuard
+git clone https://github.com/YashGoyal06/cv-24BAI10100.git
+cd cv-24BAI10100
 
 # (Optional) Create and activate a virtual environment
 python3 -m venv venv
