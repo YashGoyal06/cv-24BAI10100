@@ -4,7 +4,6 @@
 Usage:
     python3 main.py           # Launches interactive visual window with live video & HUD
     python3 main.py --cli     # Runs in pure terminal stdout mode (headless/automated)
-    python3 main.py --web     # Launches Streamlit browser dashboard
 
 By default, 'python3 main.py' opens a live OpenCV display window showing:
 - Real-time video feed with detected face bounding box & facial landmarks
@@ -245,11 +244,6 @@ def main():
         help="Run in headless terminal stdout mode without GUI window",
     )
     parser.add_argument(
-        "--web",
-        action="store_true",
-        help="Launch the Streamlit web browser dashboard",
-    )
-    parser.add_argument(
         "--duration",
         type=int,
         default=0,
@@ -261,13 +255,6 @@ def main():
         help="Disable audio beep alerts",
     )
     args = parser.parse_args()
-
-    if args.web:
-        # Launch Streamlit
-        import subprocess
-        print("[*] Launching Streamlit web dashboard...")
-        subprocess.run(["streamlit", "run", os.path.join(CURRENT_DIR, "app.py")])
-        return
 
     source = int(args.source) if args.source.isdigit() else args.source
 

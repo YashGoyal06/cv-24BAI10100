@@ -40,9 +40,6 @@ python3 main.py --cli
 
 # Run in terminal mode for exactly 20 seconds:
 python3 main.py --cli --duration 20
-
-# Run with the Streamlit browser dashboard:
-python3 main.py --web
 ```
 
 ---

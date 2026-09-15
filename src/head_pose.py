@@ -120,13 +120,19 @@ class HeadPoseEstimator:
         # Convert Rodrigues rotation vector to 3x3 rotation matrix
         rotation_mat, _ = cv2.Rodrigues(rotation_vector)
 
-        # Decompose rotation matrix into Euler angles
-        # Using RQDecomp3x3 for robust Euler angle extraction (Pitch, Yaw, Roll)
-        angles, _, _, _, _, _ = cv2.RQDecomp3x3(rotation_mat)
+        # Decompose projection matrix into authentic driver Euler angles
+        proj_mat = np.hstack((rotation_mat, translation_vector))
+        _, _, _, _, _, _, euler_angles = cv2.decomposeProjectionMatrix(proj_mat)
+        raw_pitch = float(euler_angles[0][0])
+        raw_yaw = float(euler_angles[1][0])
+        raw_roll = float(euler_angles[2][0])
 
-        pitch = float(angles[0] * 360.0)
-        yaw = float(angles[1] * 360.0)
-        roll = float(angles[2] * 360.0)
+        # Map to intuitive driver perspective: forward = (0, 0, 0)
+        # pitch > 0 is looking down, pitch < 0 is looking up
+        # yaw > 0 is looking right, yaw < 0 is looking left
+        pitch = (180.0 - raw_pitch) if raw_pitch > 90.0 else (-180.0 - raw_pitch if raw_pitch < -90.0 else -raw_pitch)
+        yaw = float(raw_yaw)
+        roll = float(raw_roll)
 
         # Classify head gaze direction
         direction = "FORWARD"

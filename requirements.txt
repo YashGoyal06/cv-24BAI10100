@@ -1,12 +1,9 @@
 # VisionGuard Core Dependencies
-# Tested on Python 3.9 - 3.11
+# Python 3.9 - 3.11 (macOS / Linux / Windows)
 
 opencv-python>=4.8.0
-mediapipe>=0.10.0
-streamlit>=1.30.0
+mediapipe==0.10.14
+protobuf<4.26,>=3.20.2
 numpy>=1.24.0
-pandas>=2.0.0
-matplotlib>=3.7.0
 scipy>=1.10.0
 pytest>=7.4.0
-reportlab>=4.0.0

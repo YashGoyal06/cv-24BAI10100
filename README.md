@@ -8,12 +8,11 @@
 
 <br/>
 
-[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
-[![OpenCV](https://img.shields.io/badge/OpenCV-Computer%20Vision-5C3EE8?style=flat-square&logo=opencv&logoColor=white)](https://opencv.org)
-[![MediaPipe](https://img.shields.io/badge/MediaPipe-Face%20Mesh%20468-00C7B7?style=flat-square)](https://developers.google.com/mediapipe)
-[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io)
-[![License](https://img.shields.io/badge/License-MIT-2ea44f?style=flat-square)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-17%20Passed-brightgreen?style=flat-square)](tests/)
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![OpenCV](https://img.shields.io/badge/OpenCV-4.8+-5C3EE8?style=flat-square&logo=opencv&logoColor=white)](https://opencv.org)
+[![MediaPipe](https://img.shields.io/badge/MediaPipe-0.10.14-007ACC?style=flat-square&logo=google&logoColor=white)](https://developers.google.com/mediapipe)
+[![Pytest](https://img.shields.io/badge/Pytest-Passing%20(17%2F17)-brightgreen?style=flat-square&logo=pytest&logoColor=white)](https://pytest.org)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
 <br/>
 
@@ -121,9 +120,8 @@ VisionGuard/
 │   ├── diagrams/                 # High-resolution PNG system diagrams (01-06)
 │   └── screenshots/              # Rendered PNG operational UI states (01-05)
 │
-├── main.py                       # Single-command runner (Visual, CLI, or Web)
+├── main.py                       # Single-command runner (Visual or CLI)
 ├── cli.py                        # Standalone terminal command-line interface
-├── app.py                        # Streamlit web dashboard application
 ├── requirements.txt              # Pinned Python package dependencies
 ├── statement.md                  # University project statement & scope
 ├── HowToRun.txt                  # Step-by-step execution guide
@@ -138,10 +136,9 @@ VisionGuard/
 | Component | Detail |
 |-----------|--------|
 | Language | Python 3.11+ |
-| Computer Vision | OpenCV (`opencv-python` 5.0.0), MediaPipe (`mediapipe` 1.0.1) |
-| Numerical Mathematics | NumPy 2.4.6, SciPy |
-| Data Processing | Pandas 3.0.5 |
-| Web Dashboard | Streamlit 1.63.0 (Dark Glassmorphic UI) |
+| Computer Vision | OpenCV (`opencv-python` 4.8+), MediaPipe (`mediapipe` 0.10.14) |
+| Numerical Mathematics | NumPy, SciPy |
+| Telemetry & Export | Standard Library (`csv`, `json`, `dataclasses`, `time`) |
 | CLI / Visual Runner | OpenCV HighGUI, Standard Library (`argparse`, `sys`, `time`) |
 | Testing Framework | Pytest 9.1.1 |
 | Version Control | Git & GitHub |
@@ -164,13 +161,6 @@ python3 main.py
 
 ```bash
 python3 main.py --cli --duration 15
-```
-
-### 3. Streamlit Web Dashboard Mode
-*Launches the browser dashboard:*
-
-```bash
-python3 main.py --web
 ```
 
 ---
