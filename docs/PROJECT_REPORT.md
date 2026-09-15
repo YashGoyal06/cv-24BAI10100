@@ -3,10 +3,8 @@
 
 **Submitted by:** Yash Goyal  
 **Reg Number:** 24BAI10100  
-**Course:** B.Tech  
-**Subject:** Computer Vision (Flipped Course Evaluation)  
-**Session:** 2025 - 2026  
-**Date:** 15/09/2026  
+**Course:** B.Tech | **Subject:** Computer Vision (Flipped Course Evaluation)  
+**Session:** 2025 - 2026 | **Date:** 15/09/2026  
 **VITyarthi - Build Your Own Project**  
 
 ---
@@ -14,7 +12,8 @@
 ## 1. COVER PAGE
 * **Project Title:** VisionGuard – AI-Based Driver Drowsiness and Distraction Detection System
 * **Domain:** Computer Vision, Pattern Recognition, Real-Time Video Processing
-* **Author:** Yash Goyal (Registration Number: 24BAI10100)
+* **Submitted by:** Yash Goyal (Reg Number: 24BAI10100)
+* **Course & Subject:** B.Tech – Computer Vision (Flipped Course Evaluation)
 * **Institution:** Vellore Institute of Technology (VIT)
 * **Evaluation:** VITyarthi Build Your Own Project Capstone Submission
 
@@ -23,7 +22,7 @@
 ## 2. INTRODUCTION
 
 ### 2.1 Project Overview
-VisionGuard is a real-time Computer Vision system designed to monitor driver alertness, detect early signs of physiological fatigue, and identify visual inattention. By analyzing real-time video streams from a consumer webcam or vehicle camera, VisionGuard computes dense facial geometry, evaluates eye and mouth aspect ratios, estimates 3D head orientation via Perspective-n-Point (SolvePnP), and issues multi-tier visual and auditory safety alerts.
+VisionGuard is a real-time Computer Vision application designed to monitor driver alertness, detect early signs of physiological fatigue, and identify visual inattention. By analyzing live video feeds from an in-cabin webcam or camera, VisionGuard computes dense facial geometry, evaluates scale-invariant eye and mouth aspect ratios, estimates 3D head orientation via Perspective-n-Point (SolvePnP), and issues multi-tier visual and auditory safety alerts.
 
 ### 2.2 Purpose
 This project was developed as part of the VITyarthi flipped course evaluation to demonstrate practical application of core Computer Vision concepts, geometric feature extraction, spatial 3D pose estimation, temporal state machine modeling, and software engineering architecture.
@@ -36,19 +35,21 @@ The application focuses on core real-time driver monitoring functionality includ
 ## 3. PROBLEM STATEMENT
 
 ### 3.1 Current Challenges
-Transportation sectors face critical safety challenges related to driver impairment:
-* High fatality rates caused by driver fatigue and micro-sleep episodes.
-* Visual distraction (looking at smartphones or side windows) causing delayed hazard reaction times.
+Transportation sectors and motorists face critical safety challenges related to driver impairment:
+* Manual observation or passenger monitoring of driver fatigue is impossible during solitary driving.
+* High fatality rates caused by involuntary micro-sleep episodes lasting 1 to 3 seconds.
+* Visual distraction (looking at smartphones, navigation displays, or side windows) causing delayed hazard reaction times.
 * Existing vehicular telemetry systems (lane departure, steering torque) operate reactively after lane drift has already occurred.
 * Wearable sensors (EEG headbands, pulse oximeters) are intrusive and uncomfortable for drivers.
 * High false alarm rates in early prototypes caused by speech and normal blinking.
 
 ### 3.2 Impact
 These challenges lead to:
-* Over 1.35 million annual road traffic deaths worldwide according to the WHO.
-* Severe economic and freight losses for commercial logistics operators.
-* Increased accident rates during nighttime long-haul journeys.
-* Lack of objective driver shift safety auditing data.
+* Over 1.35 million annual road traffic deaths worldwide according to the World Health Organization (WHO).
+* Severe economic and freight losses for commercial logistics and transport operators.
+* Increased highway collision risks during nighttime long-haul journeys.
+* Difficulty in identifying long-term driver fatigue patterns.
+* Poor driver shift data organization and absence of objective safety auditing telemetry.
 
 ### 3.3 Proposed Solution
 A non-intrusive, proactive Computer Vision Driver Monitoring System (DMS) that tracks facial biometrics in real time, applies temporal filtering to reject false positives, calculates composite risk, and issues immediate auditory and visual warnings prior to collision risk.
@@ -120,12 +121,33 @@ A non-intrusive, proactive Computer Vision Driver Monitoring System (DMS) that t
 ## 6. SYSTEM ARCHITECTURE
 
 ### 6.1 Architecture Overview
-VisionGuard follows a layered pipeline architecture pattern comprising five distinct tiers:
-1. **Acquisition Layer (`src/camera.py`)**: Interfaces with OpenCV `VideoCapture` to manage camera connections, handle reconnections, and compute rolling FPS.
-2. **Perception Layer (`src/face_detector.py`)**: Executes MediaPipe FaceMesh to regressed 468 3D facial vertices and transforms normalized values into image pixel coordinates.
-3. **Feature Extraction Layer (`src/eye_detector.py`, `src/yawn_detector.py`, `src/head_pose.py`, `src/utils.py`)**: Computes geometric formulas: 6-point EAR for eyes, MAR for mouth aperture, and SolvePnP for 3D head pose Euler angles.
-4. **Assessment & Alert Layer (`src/risk_engine.py`, `src/alert_manager.py`, `src/analytics.py`)**: Synthesizes features via weighted linear hazard estimation, applies EMA smoothing, classifies safety state, and dispatches non-blocking audio cues.
-5. **Presentation Layer (`app.py`, `cli.py`, `src/utils.py`)**: Renders OpenCV HUD overlays, updates Streamlit dashboard widgets, streams terminal CLI telemetry, and exports CSV/JSON files.
+VisionGuard follows a layered pipeline architecture pattern comprising five distinct layers:
+
+**Acquisition Layer (`src/camera.py`)**
+* Manages camera hardware connections via OpenCV `VideoCapture`
+* Configures capture resolution ($640 \times 480$) and handles frame rate stabilization
+* Computes rolling frame-per-second (FPS) metrics
+
+**Perception Layer (`src/face_detector.py`)**
+* Ingests BGR frames and converts them to RGB format for neural inference
+* Regresses 468 dense 3D facial vertices using MediaPipe FaceMesh
+* Transforms normalized $[0.0, 1.0]$ coordinates into Euclidean image pixel space
+
+**Feature Extraction Layer**
+* `EyeDetector` (`src/eye_detector.py`): Computes 6-point EAR for ocular closure analysis
+* `YawnDetector` (`src/yawn_detector.py`): Computes MAR for oral aperture analysis
+* `HeadPoseEstimator` (`src/head_pose.py`): Solves 3D Perspective-n-Point pose for Euler angles
+* `Utils` (`src/utils.py`): Pure Euclidean distance functions and geometry math
+
+**Assessment & Alert Layer**
+* `RiskEngine` (`src/risk_engine.py`): Multi-factor linear hazard fusion and EMA temporal smoothing
+* `AlertManager` (`src/alert_manager.py`): Threaded non-blocking auditory alarm dispatcher with cooldown
+* `SessionAnalytics` (`src/analytics.py`): Real-time metrics aggregator and file exporter
+
+**Presentation Layer**
+* `Streamlit Dashboard` (`app.py`): Interactive dark-mode dashboard with real-time telemetry
+* `Command-Line Interface` (`cli.py`): Terminal-based headless execution script
+* `HUD Renderer` (`src/utils.py`): Direct on-frame visual overlay graphics
 
 ### 6.2 Architecture Diagram
 The architecture diagram illustrates the five vertical layers and data flow from camera input to user presentation:
@@ -133,6 +155,7 @@ The architecture diagram illustrates the five vertical layers and data flow from
 
 ### 6.3 Design Rationale
 * **Layered Architecture**: Chosen for clear separation of concerns, high testability, and maintainability.
+* **Service / Manager Pattern**: Encapsulates specific domain responsibilities (perception, risk, alerts) away from the user interface.
 * **Decoupled Perception & Geometry**: MediaPipe landmark regression is isolated from mathematical aspect ratio calculations, allowing landmark backends to be upgraded independently.
 * **Non-Blocking Alert Worker**: Audio generation runs on background daemon threads so video frame processing is never blocked by audio I/O.
 
@@ -141,27 +164,27 @@ The architecture diagram illustrates the five vertical layers and data flow from
 ## 7. DESIGN DIAGRAMS
 
 ### 7.1 Use Case Diagram
-* **Description**: Illustrates interactions between the Driver / Evaluator and VisionGuard. The user can start/stop monitoring, calibrate biometric thresholds, view real-time HUD telemetry, receive auditory alarms, and export session logs.
+* **Description**: Illustrates interactions between the Driver / Evaluator and VisionGuard. The user can perform five main use cases: Start/Stop Monitoring Session, Calibrate Biometric Thresholds, View Live Heads-Up Display (HUD) & Telemetry, Receive Auditory & Visual Hazard Alerts, and Export Session Metrics (CSV / JSON). All use cases are contained within the system boundary.
 *(Refer to `docs/diagrams/01-use-case-diagram.png`)*
 
 ### 7.2 Class Diagram
-* **Description**: Depicts class associations, attributes, and methods across `AppConfig`, `VideoStream`, `FaceLandmarkDetector`, `EyeDetector`, `YawnDetector`, `HeadPoseEstimator`, `RiskEngine`, `AlertManager`, and `SessionAnalytics`.
+* **Description**: Depicts class associations, attributes, and methods across `AppConfig`, `VideoStream`, `FaceLandmarkDetector`, `EyeDetector`, `YawnDetector`, `HeadPoseEstimator`, `RiskEngine`, `AlertManager`, and `SessionAnalytics`. Classes maintain clear separation between models, services, and utility routines.
 *(Refer to `docs/diagrams/02-class-diagram.png`)*
 
 ### 7.3 Sequence Diagram
-* **Description**: Details chronological per-frame message flow: user initiates monitoring $\to$ frame capture $\to$ landmark regression $\to$ parallel EAR/MAR/PnP extraction $\to$ risk assessment $\to$ threaded alert evaluation $\to$ HUD overlay rendering.
+* **Description**: Details chronological per-frame message flow: Driver starts monitoring $\to$ `VideoStream.read_frame()` $\to$ `FaceLandmarkDetector.process_frame()` $\to$ parallel feature extraction in `EyeDetector`, `YawnDetector`, `HeadPoseEstimator` $\to$ `RiskEngine.assess_risk()` $\to$ `AlertManager.update_alert()` $\to$ `draw_hud()` rendering on frame.
 *(Refer to `docs/diagrams/03-sequence-diagram.png`)*
 
 ### 7.4 System Architecture Diagram
-* **Description**: Depicts the five-layer vertical stack from camera ingestion through perception, feature extraction, assessment, and dual presentation (CLI & Streamlit).
+* **Description**: Depicts the five-layer vertical stack from camera ingestion through perception, feature extraction, assessment, and dual presentation (CLI & Streamlit). Data flows downward during frame processing and upward during user configuration.
 *(Refer to `docs/diagrams/04-architecture-diagram.png`)*
 
 ### 7.5 ER Diagram (Telemetry Data Model)
-* **Description**: Data schema capturing the 1-to-many relationship between a `DriverSession` entity (summary KPIs) and nested `FrameObservation` entities (per-frame biometrics and hazard scores).
+* **Description**: Data schema capturing the 1-to-many relationship between a `DriverSession` entity (summary KPIs, duration, blinks, yawns) and nested `FrameObservation` entities (timestamp, EAR, MAR, head pose angles, instant score, safety state).
 *(Refer to `docs/diagrams/05-er-diagram.png`)*
 
 ### 7.6 Process Flow Diagram
-* **Description**: Details application execution lifecycle from launch, camera initialization, frame processing loop, threshold checks, state transitions, to CSV/JSON export upon exit.
+* **Description**: Details application execution lifecycle: application launch $\to$ camera initialization $\to$ frame capture loop $\to$ landmark detection branch $\to$ biometric threshold verification $\to$ state machine categorization $\to$ alert dispatch $\to$ telemetry persistence on exit.
 *(Refer to `docs/diagrams/06-process-flow-diagram.png`)*
 
 ---
@@ -172,21 +195,32 @@ The architecture diagram illustrates the five vertical layers and data flow from
 * **Choice: Python 3.11**
   * *Reason*: Rapid development, extensive Computer Vision ecosystem (OpenCV, MediaPipe), strong type hinting support.
   * *Alternative Considered*: C++ — rejected due to course delivery constraints and cross-platform build friction.
+  * *Benefit*: Broad library support and cross-platform compatibility across macOS, Linux, and Windows.
 * **Choice: MediaPipe FaceMesh over Dlib 68**
   * *Reason*: Provides 468 dense 3D landmarks at $\ge 30$ FPS on CPU; highly robust against extreme head yaw up to $\pm 45^\circ$; includes iris refinement.
   * *Alternative Considered*: Dlib shape predictor — rejected due to CMake C++ build dependencies, high CPU load, and failure during lateral head turns.
+  * *Benefit*: Highly optimized sub-millisecond mobile neural inference on CPU.
 * **Choice: Perspective-n-Point (SolvePnP) for Head Pose**
   * *Reason*: Provides true 3D spatial rotation (Pitch, Yaw, Roll) using pinhole camera geometry rather than crude 2D landmark heuristic ratios.
+  * *Alternative Considered*: 2D facial bounding box displacement — rejected due to inaccuracy during pure rotational movement.
+  * *Benefit*: Mathematically rigorous and compatible with standard camera calibration models.
 * **Choice: Streamlit + CLI Dual Interface**
   * *Reason*: Streamlit provides a modern glassmorphic dashboard for visual demonstration; the CLI script (`cli.py`) ensures 100% terminal executability for automated grading environments.
+  * *Benefit*: Flexibility to run interactively in a browser or headlessly in a continuous integration environment.
 
 ### 8.2 Architectural Decisions
+* **Choice: Layered Pipeline Architecture**
+  * *Reason*: Clear separation of concerns and maintainability.
+  * *Benefit*: Each layer has a single responsibility, making unit testing and profiling straightforward.
 * **Choice: Centralized Dataclass Configuration (`src/config.py`)**
   * *Reason*: Eliminates magic numbers from code logic; makes every threshold (EAR 0.22, MAR 0.60, Yaw $25^\circ$) transparent, configurable, and academically defensible.
+  * *Benefit*: Instantaneous calibration without modifying computational modules.
 * **Choice: Multi-Frame Temporal Windowing**
   * *Reason*: Instantaneous thresholding causes excessive false alarms from natural blinks or speech syllables. Temporal persistence guarantees deliberate events.
+  * *Benefit*: High specificity without sacrificing safety responsiveness.
 * **Choice: Exponential Moving Average (EMA) Filtering**
   * *Reason*: Smooths frame-to-frame sensor noise while allowing rapid escalation during genuine danger.
+  * *Benefit*: Eliminates HUD score jitter and prevents sporadic alarm triggering.
 
 ---
 
@@ -194,11 +228,13 @@ The architecture diagram illustrates the five vertical layers and data flow from
 
 ### 9.1 Technology Stack
 * **Language**: Python 3.11
+* **IDE**: Visual Studio Code / Cursor / PyCharm
 * **Computer Vision**: OpenCV (`opencv-python` 5.0.0), MediaPipe (`mediapipe` 1.0.1)
 * **Mathematics & Data**: NumPy 2.4.6, SciPy, Pandas 3.0.5
-* **Web UI**: Streamlit 1.63.0
+* **Web Dashboard**: Streamlit 1.63.0
 * **Testing**: Pytest 9.1.1
 * **PDF Compilation**: ReportLab 5.0.0
+* **Version Control**: Git & GitHub
 
 ### 9.2 Key Implementation Highlights
 
