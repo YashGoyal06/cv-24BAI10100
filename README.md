@@ -12,7 +12,6 @@
 [![OpenCV](https://img.shields.io/badge/OpenCV-Computer%20Vision-5C3EE8?style=flat-square&logo=opencv&logoColor=white)](https://opencv.org)
 [![MediaPipe](https://img.shields.io/badge/MediaPipe-Face%20Mesh%20468-00C7B7?style=flat-square)](https://developers.google.com/mediapipe)
 [![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io)
-[![CLI](https://img.shields.io/badge/Interface-CLI%20%2B%20Web-555555?style=flat-square)]()
 [![License](https://img.shields.io/badge/License-MIT-2ea44f?style=flat-square)](LICENSE)
 [![Tests](https://img.shields.io/badge/Tests-17%20Passed-brightgreen?style=flat-square)](tests/)
 
@@ -28,9 +27,20 @@
 
 ---
 
+## Quick Start (Single Command)
+
+To run the complete system with live visual display and heads-up telemetry:
+
+```bash
+python3 main.py
+```
+*Press **`q`** or **`ESC`** on the video window to stop and view the session summary.*
+
+---
+
 ## About the Project
 
-**VisionGuard** is an end-to-end, edge-computing Computer Vision application designed to monitor driver alertness in real time, detect physiological drowsiness, and identify cognitive or visual distraction. Operating from a live video stream (webcam or video file), VisionGuard extracts 468 3D facial landmarks, computes scale-invariant ocular and oral geometry, estimates 3D head orientation via Perspective-n-Point (SolvePnP), and issues multi-tier visual and auditory hazard alerts.
+**VisionGuard** is an end-to-end, edge-computing Computer Vision application designed to monitor driver alertness in real time, detect physiological drowsiness, and identify cognitive or visual distraction. Operating from a live video stream (webcam or video file), VisionGuard extracts dense facial landmarks, computes scale-invariant ocular and oral geometry, estimates 3D head orientation via Perspective-n-Point (SolvePnP), and issues multi-tier visual and auditory hazard alerts.
 
 The project is structured specifically for the **VITyarthi "Build Your Own Project" Flipped Course Evaluation**, demonstrating rigorous mathematical Computer Vision fundamentals, modular software architecture, comprehensive unit testing, and full command-line terminal executability.
 
@@ -41,8 +51,7 @@ The project is structured specifically for the **VITyarthi "Build Your Own Proje
 - [Features](#features)
 - [Project Structure](#project-structure)
 - [Technologies](#technologies)
-- [Getting Started](#getting-started)
-- [Usage (CLI & Web)](#usage-cli--web)
+- [How to Run](#how-to-run)
 - [Computer Vision Algorithms](#computer-vision-algorithms)
 - [System Diagrams](#system-diagrams)
 - [Screenshots](#screenshots)
@@ -54,8 +63,8 @@ The project is structured specifically for the **VITyarthi "Build Your Own Proje
 
 ## Features
 
-**Face & Landmark Localization**  
-Tracks 468 dense 3D facial landmarks in real time using MediaPipe FaceMesh, mapping normalized coordinates to image pixel space with robust handling of temporary facial loss.
+**Live Visual Display & Heads-Up Telemetry**  
+Opens a real-time OpenCV window annotating the driver's face, projecting a 3D directional gaze ray, and rendering a top glassmorphic status badge, dynamic risk gauge, and biometrics.
 
 **Eye Aspect Ratio (EAR) & Blink Tracking**  
 Implements the 6-point EAR formula (Soukupová & Čech, 2016) to calculate eyelid aperture, record intentional blinks ($1-4$ frames), compute blink rates, and detect micro-sleep episodes ($\ge 15$ frames).
@@ -72,11 +81,8 @@ Combines ocular, oral, spatial, and blink cues into a linear hazard score with E
 **Debounced Auditory Alert System**  
 Dispatches priority-tiered acoustic alarms via non-blocking background threads with a 2.0-second cooldown to avoid continuous sound spamming.
 
-**Dual Execution Modes: Web & Terminal CLI**  
-Fully executable via an interactive dark glassmorphic Streamlit dashboard (`app.py`) as well as a standalone terminal command-line tool (`cli.py`) for automated/headless evaluation.
-
 **Session Analytics & Data Persistence**  
-Logs granular frame-level telemetry and generates one-click exports to structured CSV and JSON datasets.
+Logs granular frame-level telemetry and generates one-click exports to structured CSV and JSON datasets on exit.
 
 ---
 
@@ -88,14 +94,17 @@ VisionGuard/
 ├── src/
 │   ├── config.py                 # Centralized thresholds & configuration dataclasses
 │   ├── camera.py                 # OpenCV VideoStream frame acquisition & FPS tracker
-│   ├── face_detector.py          # MediaPipe FaceMesh 468 3D landmark extractor
+│   ├── face_detector.py          # Facial landmark regression & Haar cascade fallback
 │   ├── eye_detector.py           # 6-point EAR calculation & blink/closure detector
 │   ├── yawn_detector.py          # MAR calculation & temporal yawn persistence filter
 │   ├── head_pose.py              # 3D SolvePnP pose estimation & Euler angle calculator
 │   ├── risk_engine.py            # Multi-cue hazard scoring & EMA temporal smoothing
 │   ├── alert_manager.py          # Threaded non-blocking audio alarm dispatcher
 │   ├── analytics.py              # Telemetry collector & CSV/JSON exporter
-│   └── utils.py                  # Euclidean distance math & Heads-Up Display (HUD)
+│   ├── utils.py                  # Euclidean distance math & Heads-Up Display (HUD)
+│   ├── generate_sample_video.py  # Benchmark test video generation script
+│   ├── haarcascade_frontalface_default.xml # Bundled offline face detector
+│   └── haarcascade_eye.xml       # Bundled offline eye detector
 │
 ├── tests/
 │   ├── test_eye_detector.py      # Unit tests for EAR, distance math & blink logic
@@ -105,17 +114,19 @@ VisionGuard/
 │   └── test_analytics.py         # Unit tests for session telemetry & file export
 │
 ├── data/
+│   ├── sample_video.mp4          # Bundled 20s benchmark driving video
 │   └── sample_sessions/          # Directory for exported session logs (.csv, .json)
 │
 ├── docs/
 │   ├── diagrams/                 # High-resolution PNG system diagrams (01-06)
 │   └── screenshots/              # Rendered PNG operational UI states (01-05)
 │
-├── app.py                        # Streamlit web dashboard application
+├── main.py                       # Single-command runner (Visual, CLI, or Web)
 ├── cli.py                        # Standalone terminal command-line interface
+├── app.py                        # Streamlit web dashboard application
 ├── requirements.txt              # Pinned Python package dependencies
 ├── statement.md                  # University project statement & scope
-├── HowToRun.txt                  # Platform execution notes
+├── HowToRun.txt                  # Step-by-step execution guide
 ├── LICENSE                       # MIT License
 └── README.md
 ```
@@ -131,72 +142,36 @@ VisionGuard/
 | Numerical Mathematics | NumPy 2.4.6, SciPy |
 | Data Processing | Pandas 3.0.5 |
 | Web Dashboard | Streamlit 1.63.0 (Dark Glassmorphic UI) |
-| CLI Interface | Standard Library (`argparse`, `sys`, `time`) |
+| CLI / Visual Runner | OpenCV HighGUI, Standard Library (`argparse`, `sys`, `time`) |
 | Testing Framework | Pytest 9.1.1 |
 | Version Control | Git & GitHub |
 
 ---
 
-## Getting Started
+## How to Run
 
-### Prerequisites
-- Python 3.9, 3.10, or 3.11 installed
-- Standard USB Webcam or integrated laptop camera (or test video clip)
-- Git
-
-### Clone & Install
+### 1. Single Command (Interactive Visual Mode)
+*Opens an interactive video display window with live HUD and face tracking:*
 
 ```bash
-# Clone the repository
-git clone https://github.com/YashGoyal06/cv-24BAI10100.git
-cd cv-24BAI10100
-
-# (Optional) Create and activate a virtual environment
-python3 -m venv venv
-source venv/bin/activate       # On Windows: venv\Scripts\activate
-
-# Install all dependencies
-pip3 install -r requirements.txt
+python3 main.py
 ```
+- Controls: Press **`q`** or **`ESC`** on the video window to stop.
+- On exit, prints full driving statistics and exports CSV/JSON files.
 
----
-
-## Usage (CLI & Web)
-
-VisionGuard is designed to be **100% executable from the terminal command line**, as well as through an interactive web UI.
-
-### 1. Command-Line Interface (CLI Mode)
-*Run completely in the terminal without GUI requirements:*
+### 2. Terminal CLI Mode (Headless / Automated)
+*For automated evaluation without a display window:*
 
 ```bash
-# Run monitoring with default webcam for 15 seconds
-python3 cli.py
-
-# Run for a specific duration (e.g. 30 seconds)
-python3 cli.py --duration 30
-
-# Run with a recorded driving video file
-python3 cli.py --source /path/to/driving_clip.mp4 --duration 20
-
-# Run in silent mode without sound beeps
-python3 cli.py --no-audio
+python3 main.py --cli --duration 15
 ```
 
-**CLI Output Example:**
-```
-SEC    | FPS   | STATUS      | RISK%  | EAR    | POSE     | BLINKS | ALERTS
-----------------------------------------------------------------------
-  1.0s |  29.1 | SAFE        |  12.3% |  0.334 | FORWARD  | 1      | -
-  3.5s |  28.7 | DROWSY      |  65.4% |  0.138 | FORWARD  | 2      | BEEP
-  6.0s |  29.0 | DISTRACTED  |  68.2% |  0.312 | RIGHT    | 2      | BEEP
-```
-
-### 2. Interactive Web Dashboard (Streamlit Mode)
+### 3. Streamlit Web Dashboard Mode
+*Launches the browser dashboard:*
 
 ```bash
-streamlit run app.py
+python3 main.py --web
 ```
-Open your browser at `http://localhost:8501`. Click **▶ Start Monitoring** to begin live video analysis with heads-up display overlays, real-time biometrics, and post-session CSV/JSON downloads.
 
 ---
 
@@ -223,27 +198,21 @@ Rotation matrix $\mathbf{R}$ is decomposed into Tait-Bryan Euler angles: Pitch (
 ## System Diagrams
 
 ### Use Case Diagram
-Interaction flow between the driver and system functions:
 ![Use Case Diagram](docs/diagrams/01-use-case-diagram.png)
 
 ### Class / Component Diagram
-Modular object-oriented structure and class relationships:
 ![Class Diagram](docs/diagrams/02-class-diagram.png)
 
 ### Sequence Diagram
-Per-frame chronological processing across perception, risk, and alert modules:
 ![Sequence Diagram](docs/diagrams/03-sequence-diagram.png)
 
 ### Architecture Diagram
-Five-tier layered pipeline architecture:
 ![Architecture Diagram](docs/diagrams/04-architecture-diagram.png)
 
 ### Telemetry ER Diagram
-Data relationship schema between Driver Sessions and Frame Observations:
 ![ER Diagram](docs/diagrams/05-er-diagram.png)
 
 ### Process Flow Diagram
-Complete lifecycle from frame ingestion to telemetry export:
 ![Process Flow Diagram](docs/diagrams/06-process-flow-diagram.png)
 
 ---
@@ -251,23 +220,18 @@ Complete lifecycle from frame ingestion to telemetry export:
 ## Screenshots
 
 ### Live Monitoring (SAFE State)
-Driver alert and looking forward with nominal EAR:
 ![SAFE State](docs/screenshots/01_live_monitoring_safe.png)
 
 ### Prolonged Eye Closure (DROWSY State)
-High-contrast warning and auditory beep triggered:
 ![DROWSY State](docs/screenshots/02_drowsiness_detected.png)
 
 ### Head Turn Distraction (DISTRACTED State)
-3D gaze ray projection tracking driver gaze diversion:
 ![DISTRACTED State](docs/screenshots/03_distraction_detected.png)
 
 ### Yawn Detection (CAUTION State)
-Mouth aspect ratio exceeding threshold with speech filtering:
 ![CAUTION State](docs/screenshots/04_yawn_detected_caution.png)
 
 ### Compound Fatigue (HIGH RISK State)
-Coincident eye closure and head turn with pulsing critical alarm:
 ![HIGH RISK State](docs/screenshots/05_compound_high_risk.png)
 
 ---
@@ -275,8 +239,8 @@ Coincident eye closure and head turn with pulsing critical alarm:
 ## Non-Functional Requirements
 
 - **Performance (NFR-1)**: End-to-end frame processing latency under 35ms ($\approx 28-30$ FPS) on consumer laptop CPUs without GPU acceleration.
-- **Usability (NFR-2)**: Single-command startup (`python3 cli.py` or `streamlit run app.py`) with responsive layout, clear status badges, and intuitive sliders.
-- **Reliability (NFR-3)**: Complete fault-tolerance for camera disconnections, lighting dropouts, and facial occlusions (`NO FACE` standby).
+- **Usability (NFR-2)**: Single-command startup (`python3 main.py`) with responsive visual display and intuitive controls.
+- **Reliability (NFR-3)**: Complete fault-tolerance for camera disconnections, lighting dropouts, and facial occlusions.
 - **Maintainability (NFR-4)**: Strict PEP-8 compliance, modular architecture, comprehensive docstrings, and zero unexplained magic numbers.
 - **Resource Efficiency (NFR-5)**: Lightweight memory footprint under 320 MB and CPU utilization under 15%.
 - **Privacy & Portability (NFR-6)**: 100% on-device volatile processing with cross-platform support across macOS, Linux, and Windows.
@@ -285,9 +249,8 @@ Coincident eye closure and head turn with pulsing critical alarm:
 
 ## Testing
 
-VisionGuard is validated through automated unit tests and reproducible scenario protocols:
+Run the automated test suite with Pytest:
 
-### Automated Unit Testing (Pytest)
 ```bash
 python3 -m pytest tests/ -v
 ```

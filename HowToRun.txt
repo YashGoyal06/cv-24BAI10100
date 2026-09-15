@@ -1,79 +1,66 @@
 # How to Run VisionGuard
 
-VisionGuard provides two execution modes:
-1. **Command-Line Interface (CLI)** — Terminal-only execution without any GUI dependency. **100% automated & crash-proof** across all environments, including headless servers, CI/CD, and macOS terminal permissions.
-2. **Interactive Web Dashboard (Streamlit)** — Full GUI with video stream, heads-up display (HUD), live biometrics, and parameter sliders.
+VisionGuard provides a **single, simple command** to launch the project.
 
 ---
 
-## 1. Environment Setup & Dependency Installation
+## Single-Command Execution (Recommended)
+
+Just open your terminal and run:
 
 ```bash
-# Navigate to the project directory
+python3 main.py
+```
+
+### What Happens When You Run `python3 main.py`:
+1. **Interactive Visual Window Opens**: A live video window titled **`VisionGuard - AI Driver Safety Monitoring`** appears on your screen.
+2. **Real-Time Visual Display & HUD**:
+   - Live video stream showing your face with detected facial landmarks.
+   - 3D Gaze Ray line projecting out of your nose to show your head orientation.
+   - Glassmorphic top Heads-Up Display (HUD) showing the color-coded safety status badge:
+     - 🟢 `SAFE`
+     - 🟡 `CAUTION` (yawning detected)
+     - 🟠 `DROWSY` (prolonged eye closure $\ge 0.5$s)
+     - 🟣 `DISTRACTED` (head turned away $>25^\circ$)
+     - 🔴 `HIGH RISK` (critical compound fatigue)
+   - Real-time Risk Score progress gauge ($0 - 100\%$).
+   - Bottom live telemetry bar showing current **FPS**, **EAR** (Eye Aspect Ratio), **MAR** (Mouth Aspect Ratio), **Pose** direction, **Blink counter**, and **Yawn counter**.
+3. **To Stop**: Simply press **`q`** or **`ESC`** on the video window (or press `Ctrl+C` in the terminal).
+4. **Instant Post-Drive Summary**: The terminal immediately prints your complete driving session analytics and exports timestamped `latest_session.csv` and `latest_session.json` to `data/sample_sessions/`.
+
+---
+
+## Other Run Modes (Optional)
+
+If the evaluator wants to run in headless / automated mode without a GUI window:
+
+```bash
+# Pure terminal text streaming mode:
+python3 main.py --cli
+
+# Run in terminal mode for exactly 20 seconds:
+python3 main.py --cli --duration 20
+
+# Run with the Streamlit browser dashboard:
+python3 main.py --web
+```
+
+---
+
+## Prerequisites & Installation
+
+```bash
 cd "/Users/yashgoyal/Documents/VITyarthi CV Project"
 
-# (Optional) Create a virtual environment
-python3 -m venv venv
-source venv/bin/activate       # On Windows: venv\Scripts\activate
-
-# Install required dependencies
+# Install dependencies (only once)
 pip3 install -r requirements.txt
 ```
 
 ---
 
-## 2. Terminal CLI Execution (Course Requirement)
-
-The CLI is engineered to be **completely crash-proof**:
-- If webcam hardware is permitted, it runs live video capture.
-- If webcam access is restricted (e.g. macOS Terminal without camera permission or headless server), it **automatically falls back** to the bundled benchmark test video (`data/sample_video.mp4`) so terminal evaluation always succeeds with zero manual setup.
-
-```bash
-# 1. Run standard terminal monitoring (default 15 seconds):
-python3 cli.py
-
-# 2. Run for a custom duration (e.g. 30 seconds):
-python3 cli.py --duration 30
-
-# 3. Run explicitly with the bundled benchmark video clip:
-python3 cli.py --source data/sample_video.mp4 --duration 20
-
-# 4. Run in silent mode without sound alerts:
-python3 cli.py --no-audio
-```
-
-### CLI Real-Time Telemetry Output:
-```text
-SEC    | FPS   | STATUS      | RISK%  | EAR    | POSE     | BLINKS | ALERTS
-----------------------------------------------------------------------
-  1.0s |  29.1 | SAFE        |  12.3% |  0.334 | FORWARD  | 1      | -
-  3.5s |  28.7 | DROWSY      |  65.4% |  0.138 | FORWARD  | 2      | ALERT!
-  6.0s |  29.0 | DISTRACTED  |  68.2% |  0.312 | RIGHT    | 2      | ALERT!
-```
-Upon completion, session telemetry CSV and summary JSON files are automatically exported to `data/sample_sessions/`.
-
----
-
-## 3. Interactive Web Dashboard (Streamlit Mode)
-
-```bash
-streamlit run app.py
-```
-
-The application will launch in your default web browser at `http://localhost:8501`.
-
-### Dashboard Controls:
-1. **Select Stream Source**: Choose "Hardware Webcam (Default Index 0)" or upload a video clip.
-2. **Adjust Detection Thresholds**: Use the sidebar sliders to customize EAR threshold, prolonged closure frames, MAR threshold, and yaw angles.
-3. **Start Monitoring**: Click **▶ Start Monitoring** to begin real-time analysis.
-4. **Stop & Export**: Click **⏹ Stop Monitoring** to view summary KPI cards and download CSV/JSON session datasets.
-
----
-
-## 4. Run Automated Unit Tests
+## Run Automated Unit Tests
 
 ```bash
 python3 -m pytest tests/ -v
 ```
-
-All 17 automated tests verify mathematical formulations (Euclidean distance, EAR, MAR), 3D SolvePnP pose estimation, Risk Engine state transitions, and file persistence with 100% pass rate.
+*(All 17 tests verify computer vision algorithms, math formulas, and state machines with 100% pass rate).*
