@@ -74,12 +74,3 @@ python3 -m pytest tests/ -v
 
 All 17 automated tests verify mathematical formulations (Euclidean distance, EAR, MAR), 3D SolvePnP pose estimation, Risk Engine state transitions, and file persistence.
 
----
-
-## 5. Recompile Project Report PDF
-
-```bash
-python3 generate_report_pdf.py
-```
-
-Compiles `VisionGuard_Project_Report.pdf` matching the official 14-section university format.
