@@ -31,3 +31,7 @@ data/sample_sessions/*.json
 *.mov
 *.mp4
 !data/sample_video.mp4
+
+# Local sub-projects
+Aditi_Project_ErgoVision/
+
