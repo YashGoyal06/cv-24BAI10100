@@ -27,6 +27,7 @@ data/sample_sessions/*.json
 !data/sample_sessions/.gitkeep
 
 # Temporary media
-*.mp4
 *.avi
 *.mov
+*.mp4
+!data/sample_video.mp4
