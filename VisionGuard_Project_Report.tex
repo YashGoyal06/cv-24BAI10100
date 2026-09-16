@@ -95,39 +95,39 @@
 % 2. INTRODUCTION
 % =========================================================================
 \section{Introduction}
-\subsection{Project Overview}
-Automotive safety research consistently demonstrates that human operator error remains the single largest contributor to vehicular accidents worldwide. According to the World Health Organization (WHO), over 1.35 million fatalities occur on global roads annually, with driver fatigue, sudden micro-sleep episodes, and cognitive distraction accounting for up to 30\% of highway collisions. Traditional vehicular telematics systems, such as Lane Departure Warning Systems (LDWS) or erratic steering torque sensors, operate reactively---alerting the driver only after the vehicle trajectory has already drifted into danger.
+\subsection{Project Description}
+Research into automotive safety consistently shows that human operator error is the number one cause of vehicle accidents worldwide. According to the World Health Organization (WHO), more than 1.35 million people die each year because of road traffic crashes. Driver fatigue, sudden episodes of micro-sleep and cognitive distraction are responsible for up to 30\% of the collisions on highways. Traditional vehicular telematics such as Lane Departure Warning Systems (LDWS) or erratic steering torque sensors are reactive systems that warn the driver only after the vehicle trajectory has already drifted into danger.
 
-\textbf{VisionGuard} is an intelligent, camera-based in-cabin Driver Monitoring System (DMS) that acts proactively. By analyzing ocular micro-movements, mouth geometry, and 3D head gaze orientation in real-time, the system detects cognitive lapses seconds prior to physical steering deviation.
+\textbf{VisionGuard} is an intelligent, proactive camera-based in-cabin driver monitoring system (DMS). The system analyzes ocular micro-movements, mouth geometry and 3D head gaze orientation in real time to detect cognitive lapses seconds before physical steering deviation.
 
-\subsection{Purpose \& Academic Motivation}
-Developed as part of the VITyarthi ``Build Your Own Project'' curriculum, VisionGuard bridges core Computer Vision mathematical foundations (Euclidean metric geometry, pinhole perspective models, 3D coordinate transformations) with high-performance real-time software engineering. It operates without wearable apparatus or specialized infrared depth cameras, running on consumer webcams at 30 FPS.
+\subsection{Academic Motivation and Justification}
+VisionGuard was designed as a part of the VITyarthi ``Build Your Own Project'' curriculum and connects the core mathematical foundations of Computer Vision (Euclidean metric geometry, pinhole perspective models, 3D coordinate transformations) with high-performance real-time software engineering. It is capable of running at 30 FPS on consumer webcams and requires no wearable devices or specialized infrared depth cameras.
 
 \subsection{Scope}
-The scope of this project encompasses real-time video capture, dense 468-point 3D facial landmark regression, mathematical feature engineering (EAR, MAR, SolvePnP Euler angles), multi-cue risk synthesis with Exponential Moving Average (EMA) smoothing, visual HUD overlay generation, rate-limited auditory warnings, and exportable session telemetry (CSV and JSON).
+This project includes real-time video capture, dense 468-point 3D facial landmark regression, mathematical feature engineering (EAR, MAR, SolvePnP Euler angles), multi-cue risk synthesis with Exponential Moving Average (EMA) smoothing, visual HUD overlay generation, rate-limited auditory warnings, and exportable session telemetry (CSV and JSON).
 
 % =========================================================================
 % 3. PROBLEM STATEMENT
 % =========================================================================
 \section{Problem Statement}
-\subsection{Current Challenges}
+\subsection{Current Problems}
 \begin{itemize}
-    \item \textbf{Wearable Inconvenience:} Wearable EEG headbands, smart rings, or pulse monitors are uncomfortable, require periodic recharging, and suffer from high driver abandonment rates.
-    \item \textbf{False Alarms during Natural Facial Motion:} Speech, yawning, laughter, and momentary saccadic eye blinks cause high false-positive rates in naive single-frame computer vision detectors.
-    \item \textbf{Hardware Constraints:} Complex deep-learning 3D convolutional neural networks require high-end discrete GPUs, making them impractical for standard vehicular edge microcontrollers.
+    \item \textbf{Wearable Inconvenience:} Wearable EEG headbands, smart rings or pulse monitors are uncomfortable, require periodic recharging and have high driver abandonment rates.
+    \item \textbf{False Alarms in Natural Facial Motion:} Speech, yawning, laughter, and momentary saccadic eye blinks result in high false positive rates in naive single frame computer vision detectors.
+    \item \textbf{Hardware Constraints:} Complex deep learning 3D convolutional neural networks require high-end discrete GPUs, which are not suitable for regular vehicular edge microcontrollers.
 \end{itemize}
 
 \subsection{Proposed Solution}
-A lightweight, non-intrusive edge system operating on CPU architecture that couples 468-point facial landmark perception with mathematically explainable geometric metrics and temporal sliding-window verification.
+A lightweight non-intrusive edge system on CPU architecture combining 468-point facial landmark perception with mathematically explainable geometric metrics and temporal sliding-window verification.
 
 % =========================================================================
 % 4. FUNCTIONAL REQUIREMENTS
 % =========================================================================
 \section{Functional Requirements}
 \begin{itemize}
-    \item \textbf{FR-1 (Video Stream Acquisition):} The system shall capture video frames from a standard USB webcam or benchmark video file at $640 \times 480$ resolution at $\ge 25$ frames per second.
+    \item \textbf{FR-1 (Video Stream Acquisition):} The system shall be capable of acquiring video frames from a standard USB webcam or benchmark video file, at resolution $640 \times 480$ and at a rate of $\ge 25$ frames per second.
     \item \textbf{FR-2 (Dense Facial Landmark Localization):} The system shall detect human faces and extract 468 3D geometric landmark coordinates in pixel coordinates $(x, y, z)$.
-    \item \textbf{FR-3 (Ocular Aperture \& Blink Frequency):} The system shall calculate the bilateral Eye Aspect Ratio (EAR) using Euclidean distance metrics and classify blinks versus sustained micro-sleeps ($\ge 15$ frames / 0.5s).
+    \item \textbf{FR-3 (Ocular Aperture \& Blink Frequency):} The system will calculate the bilateral Eye Aspect Ratio (EAR) using Euclidean distance metrics and differentiate between blinks and sustained micro-sleeps ($\ge 15$ frames / 0.5s).
     \item \textbf{FR-4 (Yawn Detection \& Speech Rejection):} The system shall compute the Mouth Aspect Ratio (MAR) and confirm involuntary yawning via a 15-frame temporal persistence buffer while rejecting transient speech syllables.
     \item \textbf{FR-5 (3D Head Pose \& Distraction Estimation):} The system shall calculate 3D head orientation (Pitch, Yaw, Roll) using OpenCV's Perspective-n-Point (SolvePnP) algorithm with canonical 3D facial coordinates and trigger alerts when gaze diverges beyond $\pm 25^\circ$ for $> 0.67$ seconds.
     \item \textbf{FR-6 (Composite Risk Assessment):} The system shall aggregate ocular, oral, and pose indicators into an instantaneous hazard score $\mathcal{H}_t \in [0, 100]$ and apply Exponential Moving Average (EMA) smoothing to classify the state into \texttt{SAFE}, \texttt{CAUTION}, \texttt{DROWSY}, \texttt{DISTRACTED}, or \texttt{HIGH RISK}.
@@ -140,23 +140,23 @@ A lightweight, non-intrusive edge system operating on CPU architecture that coup
 \section{Non-Functional Requirements}
 \begin{itemize}
     \item \textbf{NFR-1 (Performance):} The end-to-end processing pipeline shall execute within $<40$ milliseconds per frame, sustaining 25--30 FPS on standard multi-core laptop CPUs.
-    \item \textbf{NFR-2 (Usability):} The system shall support single-command terminal execution (\texttt{python3 main.py}) with zero external configuration or complex GUI dependencies.
-    \item \textbf{NFR-3 (Reliability \& Graceful Fallback):} The system shall automatically fall back to bundled benchmark video files if webcam hardware is blocked by operating system security policies.
-    \item \textbf{NFR-4 (Resource Efficiency):} The application shall maintain CPU utilization below 20\% and RAM consumption below 350 MB.
-    \item \textbf{NFR-5 (Privacy by Design):} Video streams must remain entirely within volatile memory and must not be recorded or transmitted to third-party cloud servers.
+    \item \textbf{NFR-2 (Usability):} The system should be able to run a terminal command (\texttt{python3 main.py}) in one command, without external configuration or complex GUI dependencies.
+    \item \textbf{NFR-3 (Reliability \& Graceful Fallback):} If the webcam hardware is blocked by the operating system security policies, the system shall automatically fall back to bundled benchmark video files.
+    \item \textbf{NFR-4 (Resource Efficiency):} Application should have CPU Utilization $< 20\%$ and RAM consumption $< 350$ MB.
+    \item \textbf{NFR-5 (Privacy by Design):} The video streams must be stored only in volatile memory and must not be stored or sent to third party cloud servers.
 \end{itemize}
 
 % =========================================================================
 % 6. SYSTEM ARCHITECTURE
 % =========================================================================
 \section{System Architecture}
-VisionGuard is structured into five distinct, loosely coupled architectural tiers:
+VisionGuard consists of 5 levels, each addressing specific concerns:
 \begin{enumerate}
-    \item \textbf{Video Acquisition Tier (\texttt{camera.py}):} Handles hardware initialization, multi-threaded frame acquisition, color-space normalization, and rolling FPS computation.
-    \item \textbf{Perception Tier (\texttt{face\_detector.py}):} Executes the MediaPipe FaceMesh model to extract 468 localized 3D vertices from raw BGR arrays.
-    \item \textbf{Feature Extraction Tier (\texttt{eye\_detector.py}, \texttt{yawn\_detector.py}, \texttt{head\_pose.py}):} Computes mathematically grounded scale-invariant geometric metrics: EAR, MAR, and SolvePnP 3D rotation angles.
-    \item \textbf{Assessment \& Alert Tier (\texttt{risk\_engine.py}, \texttt{alert\_manager.py}):} Computes weighted multi-cue hazard scores, applies temporal smoothing, updates state machines, and dispatches debounced audio cues.
-    \item \textbf{Presentation \& Export Tier (\texttt{utils.py}, \texttt{analytics.py}):} Renders the semi-transparent HUD overlay on video frames and serializes telemetry data to CSV and JSON formats.
+    \item \textbf{The Video Acquisition tier (\texttt{camera.py}):} Hardware initialization, multithreaded frame acquisition, colorspace normalization and FPS calculation.
+    \item \textbf{The Perception tier (\texttt{face\_detector.py}):} The MediaPipe FaceMesh algorithm running on raw BGR arrays, yielding 468 3D vertex positions.
+    \item \textbf{The Feature Extraction tier (\texttt{eye\_detector.py}, \texttt{yawn\_detector.py}, \texttt{head\_pose.py}):} Mathematically-sound metric extraction, namely the Eye Aspect Ratio, Mouth Aspect Ratio, and 3D SolvePnP pose estimation.
+    \item \textbf{The Assessment \& Alert tier (\texttt{risk\_engine.py}, \texttt{alert\_manager.py}):} The weighted hazard score calculation, state machine updates, and debounced audio alert triggering.
+    \item \textbf{The Presentation \& Export tier (\texttt{utils.py}, \texttt{analytics.py}):} The semi-transparent HUD rendering and telemetry CSV/JSON serialization.
 \end{enumerate}
 
 % =========================================================================
@@ -217,32 +217,29 @@ Details the $1:N$ relationship between session metadata and per-second continuou
 \section{Computer Vision Methodology \& Mathematical Foundations}
 
 \subsection{Eye Aspect Ratio (EAR) Formulation}
-Based on Soukupov\'{a} and \v{C}ech (2016), the Eye Aspect Ratio represents the ratio of vertical eyelid aperture to horizontal eye length:
+Based on Soukupov\'{a} and \v{C}ech (2016), the Eye Aspect Ratio is the ratio between the vertical eyelid aperture and the horizontal eye length. Under nominal open-eye conditions, EAR is in the range of 0.28--0.38, while when the eye closes, EAR decreases below 0.22:
 \begin{equation}
 \text{EAR} = \frac{\|p_2 - p_6\|_2 + \|p_3 - p_5\|_2}{2 \cdot \|p_1 - p_4\|_2}
 \end{equation}
-where $p_1, p_4$ are lateral eye corners, and $(p_2, p_6), (p_3, p_5)$ are vertical eyelid landmark pairs. Under nominal open-eye conditions, $\text{EAR} \in [0.28, 0.38]$. When closed, $\text{EAR} < 0.22$.
+where $p_1, p_4$ are lateral eye corners, and $(p_2, p_6), (p_3, p_5)$ are vertical eyelid landmark pairs.
 
 \subsection{Mouth Aspect Ratio (MAR) Formulation}
-Oral aperture is quantified to capture yawning while remaining scale-invariant:
+The mouth aperture is measured and normalized for scale to yield a dimensionless quantity that is indicative of the yawning motion. A $\text{MAR} > 0.65$ for a minimum of 15 consecutive frames would constitute a classification of yawning as opposed to normal conversation:
 \begin{equation}
 \text{MAR} = \frac{\|p_{13} - p_{14}\|_2 + \|p_{17} - p_{0}\|_2}{2 \cdot \|p_{61} - p_{291}\|_2}
 \end{equation}
-A calibrated threshold of $\text{MAR} > 0.65$ sustained over 15 consecutive frames reliably isolates yawning episodes from natural conversation.
 
-\subsection{3D Head Pose via Perspective-n-Point (SolvePnP)}
-Head orientation is solved by establishing correspondences between six 3D canonical anthropometric points $\mathbf{P}_w$ and their 2D pixel coordinates $\mathbf{p}$:
+\subsection{3D Head Pose using Perspective-n-Point (SolvePnP)}
+The head pose is estimated by finding the correspondence between the 3D world coordinates of six (6) anatomical key points and their 2D pixel projections. The rotation matrix can then be decomposed via projection matrix decomposition to obtain the model's Pitch, Yaw, and Roll:
 \begin{equation}
 s \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \mathbf{K} \begin{bmatrix} \mathbf{R} & \mathbf{t} \end{bmatrix} \begin{bmatrix} X_w \\ Y_w \\ Z_w \\ 1 \end{bmatrix}
 \end{equation}
-The rotation matrix $\mathbf{R}$ is decomposed via projection matrix decomposition into Pitch ($\theta_x$), Yaw ($\theta_y$), and Roll ($\theta_z$).
 
 \subsection{Multi-Cue Risk Synthesis}
-Instantaneous hazard $\mathcal{H}_t$ is computed via weighted linear summation:
+The instantaneous risk value is calculated using a weighted linear combination of the eye closure, yawning, distraction, and irregular blink detection cues. EMA with $\alpha = 0.25$ is applied in order to obtain a smoother risk value:
 \begin{equation}
 \mathcal{H}_t = \left( 0.40 \cdot f_{\text{eye}} + 0.25 \cdot f_{\text{yawn}} + 0.25 \cdot f_{\text{dist}} + 0.10 \cdot f_{\text{blink}} \right) \times 100
 \end{equation}
-Smoothed risk $\mathcal{R}_t$ is computed using Exponential Moving Average:
 \begin{equation}
 \mathcal{R}_t = \alpha \cdot \mathcal{H}_t + (1 - \alpha) \cdot \mathcal{R}_{t-1}, \quad \text{with } \alpha = 0.25
 \end{equation}
@@ -304,20 +301,20 @@ VisionGuard incorporates an automated test suite executed via Pytest with 17 uni
 % =========================================================================
 \section{Challenges Faced \& Technical Solutions}
 \begin{enumerate}
-    \item \textbf{MediaPipe 1.x Tasks Metal Delegate Conflict on Apple Silicon:} Upgraded MediaPipe 1.0.1 caused \texttt{DrishtiMetalHelper} initialization failures on macOS arm64.
-    \textit{Solution:} Pinned the stable native \texttt{mediapipe==0.10.14} release with compatible \texttt{protobuf<4.26,>=3.20.2}, ensuring reliable 468-point FaceMesh extraction.
-    \item \textbf{Euler Angle Discontinuities in SolvePnP:} Direct rotation matrix trigonometric inversions exhibited gimbal lock at extreme orientations.
-    \textit{Solution:} Utilized OpenCV's \texttt{decomposeProjectionMatrix} to extract intuitive camera-calibrated Euler angles.
-    \item \textbf{Yawn False Positives during Speech:} Pronouncing rounded vowels momentarily elevates MAR.
-    \textit{Solution:} Enforced a 15-frame continuous persistence window and a 60-frame refractory cooldown period.
+    \item \textbf{MediaPipe 1.x Tasks Metal Delegate Conflict:} The recent MediaPipe 1.0.1 release introduced a breaking change for Apple Silicon which caused \texttt{DrishtiMetalHelper} initialization exceptions.
+    \textit{Solution:} Pinned the native \texttt{mediapipe==0.10.14} with compatible \texttt{protobuf<4.26,>=3.20.2} which allows reliable 468-point face mesh extraction.
+    \item \textbf{Euler Angle Discontinuities:} Direct rotation matrix trigonometric unwrapping causes gimbal lock for pathological orientations.
+    \textit{Solution:} Utilized OpenCV's \texttt{decomposeProjectionMatrix} which yields intuitive camera-centered Euler angles.
+    \item \textbf{Yawn False Positives During Speech:} Phoneme-specific vowel sounds can cause temporary MAR increase.
+    \textit{Solution:} Enforced a 15-frame MAR persistence window with 60-frame cooldown between alerts.
 \end{enumerate}
 
 % =========================================================================
 % 12. LEARNINGS & CONCLUSION
 % =========================================================================
 \section{Learnings, Conclusion \& References}
-\subsection{Key Takeaways}
-Developing VisionGuard demonstrated that mathematically grounded geometric features (EAR, MAR, SolvePnP) deliver transparent, explainable, and resource-efficient performance superior to opaque deep neural networks for real-time edge computer vision applications.
+\subsection{Lessons Learned}
+The development of the VisionGuard system has demonstrated that carefully selected geometric feature extraction and mathematical modeling provides a more transparent, efficient, maintainable and safer alternative to current opaque deep learning computer vision approaches.
 
 \subsection{References}
 \begin{enumerate}
