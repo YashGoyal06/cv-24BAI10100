@@ -12,7 +12,6 @@
 [![OpenCV](https://img.shields.io/badge/OpenCV-4.8+-5C3EE8?style=flat-square&logo=opencv&logoColor=white)](https://opencv.org)
 [![MediaPipe](https://img.shields.io/badge/MediaPipe-0.10.14-007ACC?style=flat-square&logo=google&logoColor=white)](https://developers.google.com/mediapipe)
 [![Pytest](https://img.shields.io/badge/Pytest-Passing%20(17%2F17)-brightgreen?style=flat-square&logo=pytest&logoColor=white)](https://pytest.org)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
 <br/>
 
@@ -125,7 +124,6 @@ VisionGuard/
 ├── requirements.txt              # Pinned Python package dependencies
 ├── statement.md                  # University project statement & scope
 ├── HowToRun.txt                  # Step-by-step execution guide
-├── LICENSE                       # MIT License
 └── README.md
 ```
 
